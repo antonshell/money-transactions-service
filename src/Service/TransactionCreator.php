@@ -29,17 +29,24 @@ class TransactionCreator
     private $entityManager;
 
     /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
      * @var string[]
      */
     private $errors = [];
 
     public function __construct(
         WalletRepository $walletRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        AuthenticationService $authenticationService
     )
     {
         $this->walletRepository = $walletRepository;
         $this->entityManager = $entityManager;
+        $this->authenticationService = $authenticationService;
     }
 
     public function create(TransactionRequest $transactionRequest): ?Transaction
@@ -47,7 +54,8 @@ class TransactionCreator
         $source = $this->walletRepository->find($transactionRequest->getSource());
         $destination = $this->walletRepository->find($transactionRequest->getDestination());
 
-        if ($source === null) {
+        $user = $this->authenticationService->getUserFromRequest();
+        if ($source === null || $source->getUser() !== $user) {
             $this->errors[self::FIELD_SOURCE][] = self::ERROR_INVALID_SOURCE;
             return null;
         }
