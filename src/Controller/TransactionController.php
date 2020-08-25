@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Transaction;
 use App\Enum\CommissionEnum;
+use App\Http\Request\TransactionRequest;
 use App\Repository\WalletRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 class TransactionController extends AbstractController implements AuthenticatedController
 {
@@ -33,17 +35,22 @@ class TransactionController extends AbstractController implements AuthenticatedC
         $this->entityManager = $entityManager;
     }
 
-    public function create(Request $request): Response
+    /**
+     * @ParamConverter(
+     *      "transactionRequest",
+     *      converter="fos_rest.request_body",
+     *      class="App\Http\Request\TransactionRequest"
+     * )
+     *
+     * @param TransactionRequest $transactionRequest
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function create(TransactionRequest $transactionRequest): Response
     {
-        // @todo use fos rest bundle
-        $data = $this->getRequestParams($request);
-
-        $sourceId = $data['source'];
-        $destinationId = $data['destination'];
-        $amount = $data['amount'];
-
-        $source = $this->walletRepository->find($sourceId);
-        $destination = $this->walletRepository->find($destinationId);
+        $source = $this->walletRepository->find($transactionRequest->getSource());
+        $destination = $this->walletRepository->find($transactionRequest->getDestination());
 
         // @todo check user
         // @todo add errors handling
@@ -52,9 +59,9 @@ class TransactionController extends AbstractController implements AuthenticatedC
         $transaction = new Transaction();
         $transaction->setSource($source);
         $transaction->setDestination($destination);
-        $transaction->setAmount($amount);
+        $transaction->setAmount($transactionRequest->getAmount());
         $transaction->setCommissionPercent(CommissionEnum::DEFAULT);
-        $transaction->setCommissionAmount($amount * CommissionEnum::DEFAULT);
+        $transaction->setCommissionAmount($transactionRequest->getAmount() * CommissionEnum::DEFAULT);
         $transaction->setCurrency($source->getCurrency());
         $transaction->setCreatedAt(new \DateTime());
 
