@@ -1,7 +1,9 @@
 index:
   path: /
   controller: App\Controller\MainController::index
+  methods: GET
 
 transaction-create:
-  path: /transaction/create
+  path: /transaction
   controller: App\Controller\TransactionController::create
+  methods: POST
