@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Controller\AuthenticatedController;
 use App\Repository\UserRepository;
+use App\Service\AuthenticationService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -12,16 +13,18 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class TokenSubscriber implements EventSubscriberInterface
 {
+    private const ERROR_ACCESS_DENIED = 'Invalid username or password';
+
     /**
-     * @var UserRepository
+     * @var AuthenticationService
      */
-    private $userRepository;
+    private $authenticationService;
 
     public function __construct(
-        UserRepository $userRepository
+        AuthenticationService $authenticationService
     )
     {
-        $this->userRepository = $userRepository;
+        $this->authenticationService = $authenticationService;
     }
 
     /**
@@ -41,14 +44,11 @@ class TokenSubscriber implements EventSubscriberInterface
         }
 
         if ($controller[0] instanceof AuthenticatedController) {
-            $request = Request::createFromGlobals();
-            $username = $request->server->get('HTTP_USERNAME');
-            $password = $request->server->get('HTTP_PASSWORD');
-
-            $user = $this->userRepository->findByEmail($username);
+            $user = $this->authenticationService->getUserFromRequest();
+            $password = $this->authenticationService->getPasswordFromRequest();
 
             if (!$user || !password_verify($password, $user->getPassword())) {
-                throw new AccessDeniedHttpException('Invalid username or password');
+                throw new AccessDeniedHttpException(self::ERROR_ACCESS_DENIED);
             }
         }
     }
