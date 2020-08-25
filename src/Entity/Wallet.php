@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WalletRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,25 @@ class Wallet
      * @ORM\ManyToOne(targetEntity="User", inversedBy="wallets")
      */
     private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Transaction", mappedBy="source")
+     *
+     * @var Collection|Transaction[]
+     */
+    private $outcomingTransactions;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Transaction", mappedBy="destination")
+     *
+     * @var Collection|Transaction[]
+     */
+    private $incomingTransactions;
+
+    public function __construct() {
+        $this->outcomingTransactions = new ArrayCollection();
+        $this->incomingTransactions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -116,5 +137,21 @@ class Wallet
     {
         $this->user = $user;
         return $this;
+    }
+
+    /**
+     * @return Transaction[]|Collection
+     */
+    public function getOutcomingTransactions(): Collection
+    {
+        return $this->outcomingTransactions;
+    }
+
+    /**
+     * @return Transaction[]|Collection
+     */
+    public function getIncomingTransactions(): Collection
+    {
+        return $this->incomingTransactions;
     }
 }
