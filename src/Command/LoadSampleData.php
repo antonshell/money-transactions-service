@@ -41,23 +41,23 @@ class LoadSampleData extends Command
 
         $output->writeln('Create users...');
 
-        $product = new User();
-        $product->setName('User 1');
-        $product->setEmail('user1@test.com');
-        $product->setPassword('user1');
-        $this->entityManager->persist($product);
+        $user1 = new User();
+        $user1->setName('User 1');
+        $user1->setEmail('user1@test.com');
+        $user1->setPassword(password_hash('user1', PASSWORD_DEFAULT));
+        $this->entityManager->persist($user1);
 
-        $product = new User();
-        $product->setName('User 2');
-        $product->setEmail('user2@test.com');
-        $product->setPassword('user2');
-        $this->entityManager->persist($product);
+        $user2 = new User();
+        $user2->setName('User 2');
+        $user2->setEmail('user2@test.com');
+        $user2->setPassword(password_hash('user2', PASSWORD_DEFAULT));
+        $this->entityManager->persist($user2);
 
-        $product = new User();
-        $product->setName('User 3');
-        $product->setEmail('user3@test.com');
-        $product->setPassword('user3');
-        $this->entityManager->persist($product);
+        $user3 = new User();
+        $user3->setName('User 3');
+        $user3->setEmail('user3@test.com');
+        $user3->setPassword(password_hash('user3', PASSWORD_DEFAULT));
+        $this->entityManager->persist($user3);
 
         $this->entityManager->flush();
 
