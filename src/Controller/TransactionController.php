@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Transaction;
 use App\Enum\CommissionEnum;
 use App\Http\Request\TransactionRequest;
+use App\Http\Response\ValidationErrorResponse;
 use App\Repository\WalletRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,9 +14,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class TransactionController extends AbstractController implements AuthenticatedController
 {
+    use ConvertViolationsTrait;
+
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+
     /**
      * @var WalletRepository
      */
@@ -27,10 +36,12 @@ class TransactionController extends AbstractController implements AuthenticatedC
     private $entityManager;
 
     public function __construct(
+        ValidatorInterface $validator,
         WalletRepository $walletRepository,
         EntityManagerInterface $entityManager
     )
     {
+        $this->validator = $validator;
         $this->walletRepository = $walletRepository;
         $this->entityManager = $entityManager;
     }
@@ -49,6 +60,14 @@ class TransactionController extends AbstractController implements AuthenticatedC
      */
     public function create(TransactionRequest $transactionRequest): Response
     {
+        $violations = $this->validator->validate($transactionRequest);
+        if ($violations->count() > 0) {
+            return new ValidationErrorResponse(
+                $this->convertViolations($violations),
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+
         $source = $this->walletRepository->find($transactionRequest->getSource());
         $destination = $this->walletRepository->find($transactionRequest->getDestination());
 
