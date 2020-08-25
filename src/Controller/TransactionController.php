@@ -2,17 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Transaction;
-use App\Enum\CommissionEnum;
 use App\Http\Request\TransactionRequest;
 use App\Http\Response\ValidationErrorResponse;
-use App\Repository\WalletRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\TransactionCreator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -26,24 +21,17 @@ class TransactionController extends AbstractController implements AuthenticatedC
     private $validator;
 
     /**
-     * @var WalletRepository
+     * @var TransactionCreator
      */
-    private $walletRepository;
-
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private $transactionCreator;
 
     public function __construct(
         ValidatorInterface $validator,
-        WalletRepository $walletRepository,
-        EntityManagerInterface $entityManager
+        TransactionCreator $transactionCreator
     )
     {
         $this->validator = $validator;
-        $this->walletRepository = $walletRepository;
-        $this->entityManager = $entityManager;
+        $this->transactionCreator = $transactionCreator;
     }
 
     /**
@@ -68,50 +56,18 @@ class TransactionController extends AbstractController implements AuthenticatedC
             );
         }
 
-        $source = $this->walletRepository->find($transactionRequest->getSource());
-        $destination = $this->walletRepository->find($transactionRequest->getDestination());
+        $transaction = $this->transactionCreator->create($transactionRequest);
 
-        // @todo check user
-        // @todo add errors handling
-        // @todo check currencies match
+        if(!$transaction){
+            return new ValidationErrorResponse(
+                $this->transactionCreator->getErrors(),
+                Response::HTTP_BAD_REQUEST
+            );
+        }
 
-        $transaction = new Transaction();
-        $transaction->setSource($source);
-        $transaction->setDestination($destination);
-        $transaction->setAmount($transactionRequest->getAmount());
-        $transaction->setCommissionPercent(CommissionEnum::DEFAULT);
-        $transaction->setCommissionAmount($transactionRequest->getAmount() * CommissionEnum::DEFAULT);
-        $transaction->setCurrency($source->getCurrency());
-        $transaction->setCreatedAt(new \DateTime());
-
-        $this->entityManager->persist($transaction);
-
-        $source->setBalance($source->getBalance() - $transaction->getAmount());
-        $this->entityManager->persist($source);
-
-        $destination->setBalance($destination->getBalance() + $transaction->getAmount() - $transaction->getCommissionAmount());
-        $this->entityManager->persist($destination);
-
-        $this->entityManager->flush();
-        
         return new JsonResponse([
             'status' => 'ok',
             'transaction_id' => $transaction->getId(),
         ]);
-    }
-
-    /**
-     * @param Request $request
-     * @return mixed
-     */
-    public function getRequestParams(Request $request)
-    {
-        if ($request->headers->get('Content-Type') !== 'application/json') {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Invalid content type header. Must be application/json');
-        }
-
-        $params = json_decode($request->getContent(), true);
-
-        return $params;
     }
 }
