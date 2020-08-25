@@ -56,17 +56,17 @@ class TransactionCreator
 
         $user = $this->authenticationService->getUserFromRequest();
         if ($source === null || $source->getUser() !== $user) {
-            $this->errors[self::FIELD_SOURCE][] = self::ERROR_INVALID_SOURCE;
+            $this->errors[self::FIELD_SOURCE] = self::ERROR_INVALID_SOURCE;
             return null;
         }
 
         if ($destination === null) {
-            $this->errors[self::FIELD_DESTINATION][] = self::ERROR_INVALID_DESTINATION;
+            $this->errors[self::FIELD_DESTINATION] = self::ERROR_INVALID_DESTINATION;
             return null;
         }
 
         if ($destination->getCurrency() !== $source->getCurrency()) {
-            $this->errors[self::FIELD_DESTINATION][] = self::ERROR_CURRENCIES_MISMATCH;
+            $this->errors[self::FIELD_DESTINATION] = self::ERROR_CURRENCIES_MISMATCH;
             return null;
         }
 
@@ -87,7 +87,7 @@ class TransactionCreator
         $destination->setBalance($destinationBalance);
 
         if ($sourceBalance < 0) {
-            $this->errors[self::FIELD_SOURCE][] = self::ERROR_NOT_ENOUGH_FUNDS;
+            $this->errors[self::FIELD_SOURCE] = self::ERROR_NOT_ENOUGH_FUNDS;
             return null;
         }
 
