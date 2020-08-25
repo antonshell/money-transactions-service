@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -31,6 +33,17 @@ class User
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Wallet", mappedBy="user")
+     *
+     * @var Collection|Wallet[]
+     */
+    private $wallets;
+
+    public function __construct() {
+        $this->wallets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -87,5 +100,13 @@ class User
     {
         $this->password = $password;
         return $this;
+    }
+
+    /**
+     * @return Wallet[]|Collection
+     */
+    public function getWallets(): Collection
+    {
+        return $this->wallets;
     }
 }
