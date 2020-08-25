@@ -16,4 +16,12 @@ class MainController extends AbstractController
             'service' => 'Paxful-wallets-api',
         ]);
     }
+
+    public function notFound(Request $request): Response
+    {
+        return new JsonResponse([
+            'status' => 'error',
+            'message' => 'Not Found',
+        ], Response::HTTP_NOT_FOUND);
+    }
 }

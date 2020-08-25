@@ -7,3 +7,9 @@ transaction-create:
   path: /transaction
   controller: App\Controller\TransactionController::create
   methods: POST
+
+catch:
+  path: /{any}
+  controller: App\Controller\MainController::notFound
+  requirements:
+    any: ".*"
