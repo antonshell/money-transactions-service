@@ -31,7 +31,7 @@ class CreateTransactionUnauthorizedSourceTest extends AbstractCreateTransactionT
         $this->assertEquals(CurrencyEnum::BTC, $destination->getCurrency());
     }
 
-    public function testCreateTransactionNotEnoughFunds(): void
+    public function testCreateTransactionUnauthorizedSource(): void
     {
         $this->authorize(DefaultFixture::EMAIL2, DefaultFixture::PASSWORD1);
 
@@ -48,10 +48,10 @@ class CreateTransactionUnauthorizedSourceTest extends AbstractCreateTransactionT
             'amount'=> 2
         ]);
 
-        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
         $this->checkContentError([
-            'field' => 'source',
-            'message' => 'Invalid source wallet'
+            'field' => 'exception',
+            'message' => 'Invalid username or password'
         ]);
 
         // check transaction
