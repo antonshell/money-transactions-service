@@ -20,7 +20,30 @@ doing ​docker-compose up
 
 # Run with docker
 
-...
+1  . Clone repository:
+
+```
+git clone https://github.com/antonshell/paxful-wallets-api.git
+```
+
+2 . Run docker compose:
+
+```
+docker-compose up -d
+```
+
+3 . Load data:
+
+```
+docker-compose exec php-fpm php bin/console sample-data:load
+```
+
+4 . Health check:
+
+```
+curl --request GET \
+  --url http://127.0.0.1:18680'
+```
 
 # Run locally (without docker)
 
