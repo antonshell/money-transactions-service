@@ -17,7 +17,8 @@
         "symfony/framework-bundle": "5.1.*",
         "symfony/options-resolver": "5.1.*",
         "symfony/validator": "5.1.*",
-        "symfony/yaml": "5.1.*"
+        "symfony/yaml": "5.1.*",
+        "ext-json": "*"
     },
     "require-dev": {
         "symfony/browser-kit": "5.1.*",
