@@ -4,6 +4,7 @@ namespace App\Tests\Functional\Controller\Transaction;
 
 use App\Entity\Transaction;
 use App\Repository\TransactionRepository;
+use App\Repository\WalletRepository;
 use App\Tests\Functional\FixtureWebTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -43,5 +44,11 @@ abstract class AbstractCreateTransactionTest extends FixtureWebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode($data)
         );
+    }
+
+    protected function checkContentError(array $expected): void
+    {
+        $content = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertEquals($expected, $content['data'][0]);
     }
 }

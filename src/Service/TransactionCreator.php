@@ -81,15 +81,15 @@ class TransactionCreator
         $transaction->setCreatedAt(new \DateTime());
 
         $sourceBalance = $source->getBalance() - $transaction->getAmount() - $transaction->getCommissionAmount();
-        $source->setBalance($sourceBalance);
-
-        $destinationBalance = $destination->getBalance() + $transaction->getAmount();
-        $destination->setBalance($destinationBalance);
-
         if ($sourceBalance < 0) {
             $this->errors[self::FIELD_SOURCE] = self::ERROR_NOT_ENOUGH_FUNDS;
             return null;
         }
+
+        $source->setBalance($sourceBalance);
+
+        $destinationBalance = $destination->getBalance() + $transaction->getAmount();
+        $destination->setBalance($destinationBalance);
 
         $this->entityManager->persist($transaction);
         $this->entityManager->persist($source);

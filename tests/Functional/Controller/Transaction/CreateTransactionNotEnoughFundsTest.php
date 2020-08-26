@@ -8,7 +8,7 @@ use App\Enum\CurrencyEnum;
 use App\Tests\DataFixtures\Controller\DefaultFixture;
 use Symfony\Component\HttpFoundation\Response;
 
-class CreateTransactionSuccessTest extends AbstractCreateTransactionTest
+class CreateTransactionNotEnoughFundsTest extends AbstractCreateTransactionTest
 {
     public function assertPreConditions()
     {
@@ -32,7 +32,7 @@ class CreateTransactionSuccessTest extends AbstractCreateTransactionTest
         $this->assertEquals(CurrencyEnum::BTC, $destination->getCurrency());
     }
 
-    public function testCreateTransactionSuccess(): void
+    public function testCreateTransactionNotEnoughFunds(): void
     {
         $this->authorize(DefaultFixture::EMAIL1, DefaultFixture::PASSWORD1);
 
@@ -46,26 +46,21 @@ class CreateTransactionSuccessTest extends AbstractCreateTransactionTest
         $this->createTransaction([
             'source' => $source->getId(),
             'destination'=> $destination->getId(),
-            'amount'=> 2
+            'amount'=> 100
         ]);
 
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
+        $this->checkContentError([
+            'field' => 'source',
+            'message' => 'Not enough funds'
+        ]);
 
         // check transaction
-        $transactions = $this->transactionRepository->findAll();
-        $this->assertCount(1, $transactions);
-
-        $transaction = $transactions[0];
-        $this->assertEquals($source, $transaction->getSource());
-        $this->assertEquals($destination, $transaction->getDestination());
-        $this->assertEquals(CurrencyEnum::BTC, $transaction->getCurrency());
-        $this->assertEquals(2, $transaction->getAmount());
-        $this->assertEquals(CommissionEnum::DEFAULT, $transaction->getCommissionPercent());
-        $this->assertEquals(0.03, $transaction->getCommissionAmount());
+        $this->assertEmpty($this->transactionRepository->findAll());
 
         // check wallets
-        $this->assertEquals(7.97, $source->getBalance());
-        $this->assertEquals(9, $destination->getBalance());
+        $this->assertEquals(10, $source->getBalance());
+        $this->assertEquals(7, $destination->getBalance());
     }
 
     /**
