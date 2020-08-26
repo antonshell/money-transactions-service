@@ -29,6 +29,7 @@ git clone https://github.com/antonshell/paxful-wallets-api.git
 2 . Run docker compose:
 
 ```
+cd paxful-wallets-api
 docker-compose up -d
 ```
 
