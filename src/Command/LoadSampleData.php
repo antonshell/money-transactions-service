@@ -14,6 +14,43 @@ class LoadSampleData extends Command
 {
     protected static $defaultName = 'sample-data:load';
 
+    private $config = [
+        [
+            'name' => 'User 1',
+            'email' => 'user1@test.com',
+            'password' => 'user1',
+            'wallets' => [
+                [
+                    'name' => 'BTC #1',
+                    'balance' => 10,
+                    'currency' => CurrencyEnum::BTC,
+                ],
+                [
+                    'name' => 'ETH #1',
+                    'balance' => 5,
+                    'currency' => CurrencyEnum::ETH,
+                ]
+            ]
+        ],
+        [
+            'name' => 'User 2',
+            'email' => 'user2@test.com',
+            'password' => 'user2',
+            'wallets' => [
+                [
+                    'name' => 'BTC #2',
+                    'balance' => 10,
+                    'currency' => CurrencyEnum::BTC,
+                ],
+                [
+                    'name' => 'ETH #2',
+                    'balance' => 5,
+                    'currency' => CurrencyEnum::ETH,
+                ]
+            ]
+        ]
+    ];
+
     /**
      * @var EntityManagerInterface
      */
@@ -35,57 +72,30 @@ class LoadSampleData extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Remove old data...');
-
         $this->entityManager->getConnection()->executeQuery('DELETE FROM transaction');
         $this->entityManager->getConnection()->executeQuery('DELETE FROM wallet');
         $this->entityManager->getConnection()->executeQuery('DELETE FROM user');
 
-        $output->writeln('Create users...');
+        foreach ($this->config as $userRow){
+            $user = new User();
+            $user
+                ->setName($userRow['name'])
+                ->setEmail($userRow['email'])
+                ->setPassword(password_hash($userRow['password'], PASSWORD_DEFAULT));
+            $this->entityManager->persist($user);
 
-        $user1 = new User();
-        $user1->setName('User 1');
-        $user1->setEmail('user1@test.com');
-        $user1->setPassword(password_hash('user1', PASSWORD_DEFAULT));
-        $this->entityManager->persist($user1);
-
-        $user2 = new User();
-        $user2->setName('User 2');
-        $user2->setEmail('user2@test.com');
-        $user2->setPassword(password_hash('user2', PASSWORD_DEFAULT));
-        $this->entityManager->persist($user2);
-
-        $user3 = new User();
-        $user3->setName('User 3');
-        $user3->setEmail('user3@test.com');
-        $user3->setPassword(password_hash('user3', PASSWORD_DEFAULT));
-        $this->entityManager->persist($user3);
-
-        $output->writeln('Create wallets...');
-
-        $wallet1 = new Wallet();
-        $wallet1->setUser($user1);
-        $wallet1->setName('BTC 1');
-        $wallet1->setBalance(10);
-        $wallet1->setCurrency(CurrencyEnum::BTC);
-        $this->entityManager->persist($wallet1);
-
-        $wallet2 = new Wallet();
-        $wallet2->setUser($user1);
-        $wallet2->setName('ETH 1');
-        $wallet2->setBalance(2);
-        $wallet2->setCurrency(CurrencyEnum::ETH);
-        $this->entityManager->persist($wallet2);
-
-        $wallet3 = new Wallet();
-        $wallet3->setUser($user2);
-        $wallet3->setName('BTC 2');
-        $wallet3->setBalance(3);
-        $wallet3->setCurrency(CurrencyEnum::BTC);
-        $this->entityManager->persist($wallet3);
+            foreach ($userRow['wallets'] as $walletRow){
+                $wallet1 = new Wallet();
+                $wallet1
+                    ->setUser($user)
+                    ->setName($walletRow['name'])
+                    ->setBalance($walletRow['balance'])
+                    ->setCurrency($walletRow['currency']);
+                $this->entityManager->persist($wallet1);
+            }
+        }
 
         $this->entityManager->flush();
-
         $output->writeln('Job done!');
 
         return Command::SUCCESS;
