@@ -17,6 +17,7 @@ class TransactionCreator
     private const ERROR_INVALID_DESTINATION = 'Invalid destination wallet';
     private const ERROR_CURRENCIES_MISMATCH = 'Currencies mismatch';
     private const ERROR_NOT_ENOUGH_FUNDS = 'Not enough funds';
+    private const ERROR_SAME_WALLETS = 'Transfer to same wallet is forbidden';
 
     /**
      * @var WalletRepository
@@ -62,6 +63,11 @@ class TransactionCreator
 
         if ($destination === null) {
             $this->errors[self::FIELD_DESTINATION] = self::ERROR_INVALID_DESTINATION;
+            return null;
+        }
+
+        if ($source === $destination) {
+            $this->errors[self::FIELD_DESTINATION] = self::ERROR_SAME_WALLETS;
             return null;
         }
 
