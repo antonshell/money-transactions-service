@@ -32,7 +32,7 @@ class CreateTransactionEthSuccessTest extends AbstractCreateTransactionTest
         $this->assertEquals(CurrencyEnum::ETH, $destination->getCurrency());
     }
 
-    public function testCreateTransactionSuccess(): void
+    public function testCreateTransactionEthSuccess(): void
     {
         $this->authorize(DefaultFixture::EMAIL1, DefaultFixture::PASSWORD1);
 
