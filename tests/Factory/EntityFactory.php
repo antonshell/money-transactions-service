@@ -35,7 +35,7 @@ class EntityFactory extends AbstractFactory
         $data = $this->addDefaults($data, [
             'name' => $this->faker->name,
             'balance' => random_int(0, 10),
-            'currency' => CurrencyEgsnum::BTC,
+            'currency' => CurrencyEnum::BTC,
         ]);
 
         if (!array_key_exists('user', $data)) {
