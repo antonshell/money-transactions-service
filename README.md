@@ -90,3 +90,14 @@ curl --request POST \
 ```
 docker-compose exec php-fpm ./bin/phpunit
 ```
+
+# Disclaimer
+
+- I have problems with running tests in docker container, trying to resolve.
+For now, I run tests locally. There are only functional tests. I would need more time for unit tests implementation.
+
+- I use float for price. I think, it's not the best approach, but I think, it's out of scope for this task.
+I would use some specific doctrine type, or some php library for money processing.
+
+- For now there are no access tokens, I use email/password for authentication
+
