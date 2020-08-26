@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Factory;
 
-use App\Entity\Portfolio;
-use App\Entity\Post;
-use App\Entity\PostTag;
-use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Wallet;
 use App\Enum\CurrencyEnum;
