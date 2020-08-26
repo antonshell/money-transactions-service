@@ -10,6 +10,7 @@ use App\Entity\PostTag;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Entity\Wallet;
+use App\Enum\CurrencyEnum;
 
 class EntityFactory extends AbstractFactory
 {
@@ -21,9 +22,9 @@ class EntityFactory extends AbstractFactory
     public function createUser(array $data = []): User
     {
         $data = $this->addDefaults($data, [
-            'name' => '$this->faker->title',
-            'email' => '$this->faker->titl',
-            'password' => '$this->faker->word',
+            'name' => $this->faker->name,
+            'email' => $this->faker->email,
+            'password' => $this->faker->password,
         ]);
 
         return $this->create(User::class, $data);
@@ -32,9 +33,9 @@ class EntityFactory extends AbstractFactory
     public function createWallet(array $data = []): Wallet
     {
         $data = $this->addDefaults($data, [
-            'name' => '$this->faker->title',
-            'balance' => '$this->faker->titl',
-            'currency' => '$this->faker->word',
+            'name' => $this->faker->name,
+            'balance' => random_int(0, 10),
+            'currency' => CurrencyEgsnum::BTC,
         ]);
 
         if (!array_key_exists('user', $data)) {
