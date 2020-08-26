@@ -76,7 +76,6 @@ class TransactionCreator
             return null;
         }
 
-        // @todo check user
         $transaction = new Transaction();
         $transaction->setSource($source);
         $transaction->setDestination($destination);
