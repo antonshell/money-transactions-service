@@ -46,7 +46,7 @@ class CreateTransactionNotEnoughFundsTest extends AbstractCreateTransactionTest
         $this->createTransaction([
             'source' => $source->getId(),
             'destination'=> $destination->getId(),
-            'amount'=> 100
+            'amount'=> 10
         ]);
 
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $this->client->getResponse()->getStatusCode());
