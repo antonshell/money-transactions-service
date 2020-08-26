@@ -24,14 +24,14 @@ class AbstractFactory
     /**
      * @var \Faker\Generator
      */
-    //protected $faker;
+    protected $faker;
 
     public function __construct(
         ObjectManager $entityManager
     ) {
         $this->entityManager = $entityManager;
 
-        //$this->faker = Factory::create();
+        $this->faker = Factory::create();
     }
 
     protected function create($classNameOrInstance, array $data = [])
