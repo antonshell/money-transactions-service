@@ -95,11 +95,11 @@ curl --request POST \
 
 Host: localhost
 
-Database: transatcions
+Database: transactions
 
-User: transatcions
+User: transactions
 
-Password: transatcions
+Password: transactions
 
 # Tests
 
