@@ -30,7 +30,7 @@ git clone https://github.com/antonshell/money-transactions-service.git
 2 . Run docker compose:
 
 ```
-cd paxful-wallets-api
+cd money-transactions-service
 docker-compose up -d
 ```
 
