@@ -1,10 +1,11 @@
 # Software engineer test assignment - Paxful 
 
+
+# Requirements
+
 You need to implement a backend application that would allow users to transfer funds
 between wallets. On every transaction, the system will need to take a commission of
 1.5%.
-
-# Requirements
 
 - Create a relational database schema
 
