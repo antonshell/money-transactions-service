@@ -104,7 +104,7 @@ Password: transactions
 # Tests
 
 ```
-docker-compose exec php-fpm ./bin/phpunit
+docker-compose exec php-fpm ./vendor/bin/simple-phpunit
 ```
 
 # Disclaimer
