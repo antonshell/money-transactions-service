@@ -91,6 +91,13 @@ curl --request POST \
 }'
 ```
 
+3 . Dashboard
+
+```
+curl --request GET \
+  --url http://127.0.0.1:18680/dashboard
+```
+
 # DB connection
 
 Host: localhost

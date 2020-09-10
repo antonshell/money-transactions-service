@@ -8,6 +8,11 @@ transaction-create:
   controller: App\Controller\TransactionController::create
   methods: POST
 
+dashboard:
+  path: /dashboard
+  controller: App\Controller\DashboardController::index
+  methods: GET
+
 catch:
   path: /{any}
   controller: App\Controller\MainController::notFound
