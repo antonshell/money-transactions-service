@@ -13,7 +13,7 @@ class MainController extends AbstractController
     {
         return new JsonResponse([
             'status' => 'ok',
-            'service' => 'Paxful-wallets-api',
+            'service' => 'Money-transactions-service',
         ]);
     }
 
