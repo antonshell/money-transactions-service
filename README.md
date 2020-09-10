@@ -36,7 +36,7 @@ git clone https://github.com/antonshell/money-transactions-service.git
 
 ```
 cd money-transactions-service
-docker-compose up -d
+docker-compose up
 ```
 
 3 . Load data:
