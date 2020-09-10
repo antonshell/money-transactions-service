@@ -1,5 +1,10 @@
-# Software engineer test assignment - Paxful 
+# Money transactions service
 
+There is a simple transactions service. Implemented authorization via login and password.
+User can have several valets. Implemented transactions between wallets with 1.5% commission.
+Multiple currencies supported(BTC, ETH).
+
+Project created for demo purposes, not ready for production usage.
 
 # Requirements
 
